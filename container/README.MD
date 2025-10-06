@@ -10,7 +10,23 @@ docker network create jenkins
 
 Run the Container
 
-MacOS / Linux
+Windows:
+
+docker run `
+  --name jenkins-blueocean `
+  --restart=on-failure `
+  --detach `
+  --network jenkins `
+  --env DOCKER_HOST=tcp://docker:2376 `
+  --env DOCKER_CERT_PATH=/certs/client `
+   --env DOCKER_TLS_VERIFY=1 `
+   --publish 8080:8080 `
+   --publish 50000:50000 `
+   --volume jenkins-data:/var/jenkins_home `       
+   --volume jenkins-docker-certs:/certs/client:ro `
+   jenkins-devops:latest
+
+MacOS / Linux:
 
 docker run --name jenkins-blueocean --restart=on-failure --detach \
   --network jenkins --env DOCKER_HOST=tcp://docker:2376 \
@@ -18,7 +34,7 @@ docker run --name jenkins-blueocean --restart=on-failure --detach \
   --publish 8080:8080 --publish 50000:50000 \
   --volume jenkins-data:/var/jenkins_home \
   --volume jenkins-docker-certs:/certs/client:ro \
-  myjenkins-blueocean:2.414.2
+  jenkins-devops:latest
 
 Get the Password
 
@@ -35,5 +51,3 @@ https://www.jenkins.io/doc/book/installing/docker/
 Connect to docker shell from cli:
 
 docker exec -it <container_name> bash
-
-
