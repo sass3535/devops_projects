@@ -1,0 +1,25 @@
+version: "3.9"
+
+service:
+  jenkins:
+    container_name: "jenkins-blueocean"
+    build: 
+    context: .
+    dockerfile: Dockerfile
+  image: jenkins-devops:latest
+  restart: on-failure
+  nerworks:
+  - jenkins
+  environment:
+    DOKCER_HOST: tcp://docker:2376
+    DOCKER_CERT_PATH: /certs/client
+    DOCKER_TLS_VERIFY: "1"
+  ports:
+    - "8080:8080"
+    - "5000:5000"
+  volumes:
+    - ./jenkins-data:/var/jenkins_home
+    - ./jenkins-docker-certs:/certs/client:ro
+  networks:
+    - jenkins
+     
