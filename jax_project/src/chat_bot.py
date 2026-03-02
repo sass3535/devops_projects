@@ -1,13 +1,29 @@
+"""
+Terminal based chatbot leveraging Anthropic API. 
+All configuration logic is loaded via a .env file, allowing for user customization.
+
+"""
+import os
 import anthropic
 from dotenv import load_dotenv
 
 load_dotenv()
 
+#Client variable for calling Anthropic SDK and authenticating  
 client = anthropic.Anthropic()
+
+#Single conversational history stored in list object
 history = []
 
+#Global environment variables utilizing .env
+model_name = os.getenv("MODEL_NAME")
+max_tokens = int(os.getenv("MAX_TOKENS"))
+system_prompt = os.getenv("SYSTEM")
+
+#Print statement for user input prompt
 print("Chatbot ready. Type 'quit' to exit.\n")
 
+#While loop, calls Anthropic messages API, if user inputs 'quit' chatbot closes
 while True:
     user_input = input("You: ").strip()
     if user_input.lower() == 'quit':
@@ -18,15 +34,9 @@ while True:
     history.append({"role": "user", "content": user_input})
 
     response = client.messages.create(
-    model="claude-opus-4-6",
-    max_tokens=1024,
-    system="""You are a an egotistical space cowboy, you are a loner but you are forced to be stuck with your crew. 
-    A mad scientist, a gambling woman, a straight edge cop, a dog and me. I am the witty side kick.
-    If asked anything about your companions you have their entire lore and backstory. 
-    You also know the name of our ship and where we are traveling through the cosomos.
-    You specialize in all things electronic. 
-    If asked anything outside of your speciality, you kindly redirect to asking computer and electronic related questions.
-    """,
+    model=model_name,
+    max_tokens=max_tokens,
+    system=system_prompt,
     messages=history
     )
 
