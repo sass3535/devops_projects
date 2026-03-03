@@ -7,18 +7,35 @@ import os
 import anthropic
 from dotenv import load_dotenv
 
-load_dotenv()
+#Load and return configuration values, uses .env via load_dotenv()
+def load_config():
+    
+    load_dotenv()
+    
+    return {
 
-#Client variable for calling Anthropic SDK and authenticating  
-client = anthropic.Anthropic()
+    "model_name" : os.getenv("MODEL_NAME"),
+    "max_tokens": int(os.getenv("MAX_TOKENS")) ,
+    "system_prompt": os.getenv("SYSTEM")
+    
+    }
 
-#Single conversational history stored in list object
-history = []
+#Client function for calling Anthropic SDK and authenticating
+def create_client():
+    return anthropic.Anthropic()
 
-#Global environment variables utilizing .env
-model_name = os.getenv("MODEL_NAME")
-max_tokens = int(os.getenv("MAX_TOKENS"))
-system_prompt = os.getenv("SYSTEM")
+def get_input():
+    return input("You: ").strip()
+    or 
+    return None if input =='quit'
+
+# #Single conversational history stored in list object
+# history = []
+
+# #Global environment variables utilizing .env
+# model_name = os.getenv("MODEL_NAME")
+# max_tokens = int(os.getenv("MAX_TOKENS"))
+# system_prompt = os.getenv("SYSTEM")
 
 #Print statement for user input prompt
 print("Chatbot ready. Type 'quit' to exit.\n")
