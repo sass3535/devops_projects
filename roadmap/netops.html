@@ -1,0 +1,1186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Network Intelligence Platform Guide</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #050a0f;
+    --surface: #0a1420;
+    --surface2: #0f1e2e;
+    --border: #1a3048;
+    --accent1: #00d4ff;
+    --accent2: #00ff88;
+    --accent3: #ff6b35;
+    --accent4: #a855f7;
+    --accent5: #fbbf24;
+    --text: #e2eaf4;
+    --muted: #5a7a94;
+    --mono: 'JetBrains Mono', monospace;
+    --sans: 'Syne', sans-serif;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: var(--sans);
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Animated background grid */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(0,212,255,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,212,255,0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* Glowing orbs */
+  .orb {
+    position: fixed;
+    border-radius: 50%;
+    filter: blur(120px);
+    opacity: 0.12;
+    pointer-events: none;
+    z-index: 0;
+    animation: drift 20s ease-in-out infinite alternate;
+  }
+  .orb1 { width: 600px; height: 600px; background: var(--accent1); top: -200px; left: -200px; }
+  .orb2 { width: 400px; height: 400px; background: var(--accent4); bottom: -100px; right: -100px; animation-delay: -10s; }
+  .orb3 { width: 300px; height: 300px; background: var(--accent2); top: 50%; left: 50%; animation-delay: -5s; }
+
+  @keyframes drift {
+    0% { transform: translate(0,0) scale(1); }
+    100% { transform: translate(40px, 30px) scale(1.1); }
+  }
+
+  .container {
+    position: relative;
+    z-index: 1;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 24px;
+  }
+
+  /* Hero */
+  .hero {
+    padding: 80px 0 60px;
+    text-align: center;
+    position: relative;
+  }
+
+  .hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--accent1);
+    background: rgba(0,212,255,0.08);
+    border: 1px solid rgba(0,212,255,0.2);
+    padding: 6px 16px;
+    border-radius: 100px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 28px;
+  }
+
+  .hero-badge::before {
+    content: '';
+    width: 6px; height: 6px;
+    background: var(--accent2);
+    border-radius: 50%;
+    box-shadow: 0 0 8px var(--accent2);
+    animation: pulse 2s ease-in-out infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.5; transform: scale(0.8); }
+  }
+
+  h1 {
+    font-size: clamp(36px, 6vw, 72px);
+    font-weight: 800;
+    line-height: 1.05;
+    letter-spacing: -0.03em;
+    margin-bottom: 20px;
+  }
+
+  .gradient-text {
+    background: linear-gradient(135deg, var(--accent1), var(--accent2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .hero-sub {
+    font-size: 18px;
+    color: var(--muted);
+    max-width: 600px;
+    margin: 0 auto 50px;
+    line-height: 1.6;
+    font-weight: 400;
+  }
+
+  /* Pillar nav */
+  .pillar-nav {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-bottom: 64px;
+  }
+
+  .pillar-btn {
+    font-family: var(--mono);
+    font-size: 11px;
+    padding: 8px 18px;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--muted);
+    cursor: pointer;
+    transition: all 0.2s;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  .pillar-btn:hover, .pillar-btn.active {
+    border-color: var(--accent1);
+    color: var(--accent1);
+    background: rgba(0,212,255,0.06);
+    box-shadow: 0 0 20px rgba(0,212,255,0.1);
+  }
+
+  /* Pillar cards */
+  .pillar {
+    display: none;
+    animation: fadeUp 0.4s ease;
+  }
+  .pillar.active { display: block; }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .pillar-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 24px;
+    margin-bottom: 40px;
+    padding: 32px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .pillar-header::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 3px;
+  }
+
+  .pillar-icon {
+    width: 56px; height: 56px;
+    border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 26px;
+    flex-shrink: 0;
+  }
+
+  .pillar-title { font-size: 26px; font-weight: 700; margin-bottom: 8px; }
+  .pillar-desc { color: var(--muted); line-height: 1.6; font-size: 15px; }
+
+  /* Sections grid */
+  .sections-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+    gap: 20px;
+    margin-bottom: 24px;
+  }
+
+  .section-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px;
+    transition: border-color 0.2s, transform 0.2s;
+  }
+
+  .section-card:hover {
+    border-color: rgba(0,212,255,0.3);
+    transform: translateY(-2px);
+  }
+
+  .section-title {
+    font-size: 13px;
+    font-family: var(--mono);
+    font-weight: 500;
+    color: var(--accent1);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .section-title::before {
+    content: '';
+    width: 20px; height: 1px;
+    background: currentColor;
+  }
+
+  .item-list { list-style: none; }
+
+  .item-list li {
+    padding: 10px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    font-size: 14px;
+    line-height: 1.5;
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    color: #b0c4d8;
+  }
+
+  .item-list li:last-child { border-bottom: none; }
+
+  .item-list li::before {
+    content: '▸';
+    color: var(--accent2);
+    font-size: 10px;
+    margin-top: 3px;
+    flex-shrink: 0;
+  }
+
+  /* Code blocks */
+  .code-block {
+    background: #020810;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+    margin-top: 24px;
+  }
+
+  .code-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 16px;
+    background: rgba(255,255,255,0.03);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .code-lang {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+
+  .code-dots { display: flex; gap: 6px; }
+  .code-dot { width: 10px; height: 10px; border-radius: 50%; }
+  .d1 { background: #ff5f57; }
+  .d2 { background: #febc2e; }
+  .d3 { background: #28c840; }
+
+  pre {
+    padding: 20px;
+    font-family: var(--mono);
+    font-size: 12px;
+    line-height: 1.7;
+    overflow-x: auto;
+    color: #8bb8d4;
+  }
+
+  .kw { color: #c792ea; }
+  .fn { color: #82aaff; }
+  .str { color: #c3e88d; }
+  .cm { color: #546e7a; font-style: italic; }
+  .num { color: #f78c6c; }
+  .var { color: #eeffff; }
+
+  /* Tech stack pills */
+  .tech-stack {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 16px;
+  }
+
+  .tech-pill {
+    font-family: var(--mono);
+    font-size: 11px;
+    padding: 4px 12px;
+    border-radius: 4px;
+    border: 1px solid;
+  }
+
+  /* Architecture diagram */
+  .arch-diagram {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 32px;
+    margin-top: 24px;
+  }
+
+  .arch-title {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 24px;
+  }
+
+  .arch-layers {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .arch-layer {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .arch-label {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--muted);
+    width: 80px;
+    text-align: right;
+    flex-shrink: 0;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .arch-boxes {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .arch-box {
+    padding: 6px 14px;
+    border-radius: 6px;
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 500;
+    border: 1px solid;
+  }
+
+  .arch-arrow {
+    width: 80px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .arch-connector {
+    width: 88px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .connector-line {
+    flex: 1;
+    height: 1px;
+    border-top: 1px dashed var(--border);
+  }
+
+  .connector-down {
+    width: 1px;
+    height: 20px;
+    border-left: 1px dashed var(--border);
+    margin: 0 auto;
+  }
+
+  /* Roadmap */
+  .roadmap {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 32px;
+    margin-top: 24px;
+  }
+
+  .phases { display: flex; gap: 0; }
+
+  .phase {
+    flex: 1;
+    padding: 20px;
+    border-right: 1px solid var(--border);
+    position: relative;
+  }
+  .phase:last-child { border-right: none; }
+
+  .phase-num {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 8px;
+  }
+
+  .phase-name {
+    font-size: 14px;
+    font-weight: 700;
+    margin-bottom: 12px;
+  }
+
+  .phase-items {
+    list-style: none;
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.7;
+  }
+
+  /* Summary overview */
+  .overview-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 2px;
+    background: var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    margin-bottom: 64px;
+  }
+
+  .overview-cell {
+    background: var(--surface);
+    padding: 24px 16px;
+    text-align: center;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+
+  .overview-cell:hover { background: var(--surface2); }
+
+  .overview-num {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--muted);
+    margin-bottom: 10px;
+  }
+
+  .overview-icon { font-size: 28px; margin-bottom: 10px; }
+
+  .overview-label {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text);
+    line-height: 1.4;
+  }
+
+  /* Responsive */
+  @media (max-width: 768px) {
+    .overview-grid { grid-template-columns: repeat(3, 1fr); }
+    .phases { flex-direction: column; }
+    .phase { border-right: none; border-bottom: 1px solid var(--border); }
+    .sections-grid { grid-template-columns: 1fr; }
+  }
+
+  @media (max-width: 480px) {
+    .overview-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+</style>
+</head>
+<body>
+<div class="orb orb1"></div>
+<div class="orb orb2"></div>
+<div class="orb orb3"></div>
+
+<div class="container">
+
+  <!-- Hero -->
+  <div class="hero">
+    <div class="hero-badge">Network Intelligence Engineering Playbook</div>
+    <h1>Build the <span class="gradient-text">Future</span><br>of Network Operations</h1>
+    <p class="hero-sub">A comprehensive technical guide across full-stack development, AI/ML, conversational AI, network automation, and DevOps.</p>
+  </div>
+
+  <!-- Overview grid -->
+  <div class="overview-grid">
+    <div class="overview-cell" onclick="showPillar(0)">
+      <div class="overview-num">01</div>
+      <div class="overview-icon">⚡</div>
+      <div class="overview-label">Full-Stack & Automation Apps</div>
+    </div>
+    <div class="overview-cell" onclick="showPillar(1)">
+      <div class="overview-num">02</div>
+      <div class="overview-icon">🧠</div>
+      <div class="overview-label">AI/ML for Network Ops</div>
+    </div>
+    <div class="overview-cell" onclick="showPillar(2)">
+      <div class="overview-num">03</div>
+      <div class="overview-icon">💬</div>
+      <div class="overview-label">Conversational AI</div>
+    </div>
+    <div class="overview-cell" onclick="showPillar(3)">
+      <div class="overview-num">04</div>
+      <div class="overview-icon">🔗</div>
+      <div class="overview-label">Network Automation & DataEng</div>
+    </div>
+    <div class="overview-cell" onclick="showPillar(4)">
+      <div class="overview-num">05</div>
+      <div class="overview-icon">🚀</div>
+      <div class="overview-label">DevOps & Collaboration</div>
+    </div>
+  </div>
+
+  <!-- Pillar nav -->
+  <div class="pillar-nav">
+    <button class="pillar-btn active" onclick="showPillar(0)">01 · Full-Stack</button>
+    <button class="pillar-btn" onclick="showPillar(1)">02 · AI/ML</button>
+    <button class="pillar-btn" onclick="showPillar(2)">03 · Chatbots</button>
+    <button class="pillar-btn" onclick="showPillar(3)">04 · Automation</button>
+    <button class="pillar-btn" onclick="showPillar(4)">05 · DevOps</button>
+  </div>
+
+  <!-- ===== PILLAR 1: Full-Stack ===== -->
+  <div class="pillar active" id="pillar-0">
+    <div class="pillar-header" style="--accent: #00d4ff;">
+      <div class="pillar-header::before" style="background: linear-gradient(90deg, var(--accent1), transparent);"></div>
+      <style>.pillar-header:first-of-type::before { background: linear-gradient(90deg,#00d4ff,transparent);}</style>
+      <div class="pillar-icon" style="background: rgba(0,212,255,0.1); color: #00d4ff;">⚡</div>
+      <div>
+        <div class="pillar-title">Full-Stack & Automation Applications</div>
+        <div class="pillar-desc">Design scalable, secure, high-performance applications using React, Angular, Node.js, and Python — purpose-built for network operations teams.</div>
+      </div>
+    </div>
+
+    <div class="sections-grid">
+      <div class="section-card">
+        <div class="section-title">Frontend Stack</div>
+        <ul class="item-list">
+          <li><strong>React + TypeScript</strong> — Component architecture, Redux Toolkit or Zustand for state, React Query for server state</li>
+          <li><strong>Angular</strong> — Best for large enterprise NOC dashboards; RxJS + NgRx for real-time telemetry streams</li>
+          <li><strong>Visualization</strong> — D3.js, ECharts, or Apache Superset for network topology maps and KPI charts</li>
+          <li><strong>Real-time UX</strong> — WebSocket/SSE integration for live interface utilization, alert feeds</li>
+          <li><strong>Performance</strong> — Code splitting, lazy loading, virtualized tables for large device inventories (10k+ rows)</li>
+        </ul>
+        <div class="tech-stack">
+          <span class="tech-pill" style="color:#00d4ff; border-color:rgba(0,212,255,0.3); background:rgba(0,212,255,0.05);">React 18</span>
+          <span class="tech-pill" style="color:#00d4ff; border-color:rgba(0,212,255,0.3); background:rgba(0,212,255,0.05);">TypeScript</span>
+          <span class="tech-pill" style="color:#00d4ff; border-color:rgba(0,212,255,0.3); background:rgba(0,212,255,0.05);">Angular 17</span>
+          <span class="tech-pill" style="color:#00d4ff; border-color:rgba(0,212,255,0.3); background:rgba(0,212,255,0.05);">D3.js</span>
+          <span class="tech-pill" style="color:#00d4ff; border-color:rgba(0,212,255,0.3); background:rgba(0,212,255,0.05);">Tailwind</span>
+        </div>
+      </div>
+
+      <div class="section-card">
+        <div class="section-title">Backend Stack</div>
+        <ul class="item-list">
+          <li><strong>Node.js + FastAPI</strong> — REST + GraphQL APIs; Node for event-driven gateway, Python FastAPI for ML serving</li>
+          <li><strong>Authentication</strong> — OAuth2/OIDC with Azure AD or Okta; RBAC per network domain</li>
+          <li><strong>Data layer</strong> — PostgreSQL (inventory), TimescaleDB (telemetry), Redis (caching/pub-sub), Elasticsearch (logs)</li>
+          <li><strong>Message queue</strong> — Kafka for high-throughput telemetry ingestion; RabbitMQ for task queuing</li>
+          <li><strong>API security</strong> — Input validation, rate limiting, mutual TLS for internal services, secret rotation via Vault</li>
+        </ul>
+        <div class="tech-stack">
+          <span class="tech-pill" style="color:#00ff88; border-color:rgba(0,255,136,0.3); background:rgba(0,255,136,0.05);">Node.js</span>
+          <span class="tech-pill" style="color:#00ff88; border-color:rgba(0,255,136,0.3); background:rgba(0,255,136,0.05);">FastAPI</span>
+          <span class="tech-pill" style="color:#00ff88; border-color:rgba(0,255,136,0.3); background:rgba(0,255,136,0.05);">PostgreSQL</span>
+          <span class="tech-pill" style="color:#00ff88; border-color:rgba(0,255,136,0.3); background:rgba(0,255,136,0.05);">Kafka</span>
+          <span class="tech-pill" style="color:#00ff88; border-color:rgba(0,255,136,0.3); background:rgba(0,255,136,0.05);">Redis</span>
+        </div>
+      </div>
+
+      <div class="section-card">
+        <div class="section-title">Security Principles</div>
+        <ul class="item-list">
+          <li><strong>Zero Trust</strong> — Never trust, always verify; every API call authenticated and authorized</li>
+          <li><strong>Secrets management</strong> — HashiCorp Vault or AWS Secrets Manager; no credentials in code or env files</li>
+          <li><strong>SAST/DAST</strong> — SonarQube for static analysis, OWASP ZAP for dynamic scanning in CI</li>
+          <li><strong>Dependency scanning</strong> — Snyk or Dependabot to catch vulnerable npm/pip packages</li>
+          <li><strong>Audit logging</strong> — Every privileged action logged with user, timestamp, and payload for compliance</li>
+        </ul>
+      </div>
+
+      <div class="section-card">
+        <div class="section-title">Performance & Reliability</div>
+        <ul class="item-list">
+          <li><strong>SLA targets</strong> — Define p99 latency budgets per endpoint; use distributed tracing (Jaeger/Tempo)</li>
+          <li><strong>Caching strategy</strong> — Multi-layer: CDN edge → Redis → DB query cache</li>
+          <li><strong>Circuit breakers</strong> — Resilience4j or custom middleware to prevent cascade failures</li>
+          <li><strong>Load testing</strong> — k6 or Locust before each major release; baseline and regression tests</li>
+          <li><strong>Error budgets</strong> — SRE-style error budgets tied to feature deployment velocity</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="code-block">
+      <div class="code-header">
+        <div class="code-dots"><div class="code-dot d1"></div><div class="code-dot d2"></div><div class="code-dot d3"></div></div>
+        <div class="code-lang">Python · FastAPI — Network Telemetry API</div>
+      </div>
+      <pre><span class="cm"># FastAPI endpoint: real-time interface utilization with anomaly flag</span>
+<span class="kw">from</span> <span class="var">fastapi</span> <span class="kw">import</span> <span class="var">FastAPI, Depends, HTTPException</span>
+<span class="kw">from</span> <span class="var">pydantic</span> <span class="kw">import</span> <span class="var">BaseModel</span>
+<span class="kw">from</span> <span class="var">datetime</span> <span class="kw">import</span> <span class="var">datetime</span>
+
+<span class="var">app</span> = <span class="fn">FastAPI</span>(title=<span class="str">"Network Telemetry API"</span>, version=<span class="str">"2.0"</span>)
+
+<span class="kw">class</span> <span class="fn">InterfaceMetric</span>(<span class="var">BaseModel</span>):
+    device_id: <span class="var">str</span>
+    interface: <span class="var">str</span>
+    utilization_pct: <span class="var">float</span>
+    timestamp: <span class="var">datetime</span>
+    anomaly_score: <span class="var">float</span> = <span class="num">0.0</span>
+    is_anomaly: <span class="var">bool</span> = <span class="num">False</span>
+
+<span class="var">@app.get</span>(<span class="str">"/v2/devices/{device_id}/interfaces"</span>, response_model=<span class="var">list</span>[<span class="var">InterfaceMetric</span>])
+<span class="kw">async def</span> <span class="fn">get_interface_metrics</span>(
+    device_id: <span class="var">str</span>,
+    window: <span class="var">str</span> = <span class="str">"1h"</span>,
+    current_user = <span class="fn">Depends</span>(<span class="var">verify_jwt_token</span>)
+):
+    <span class="cm">"""Fetch interface utilization with ML anomaly scores."""</span>
+    metrics = <span class="kw">await</span> <span class="var">telemetry_db</span>.<span class="fn">query_interfaces</span>(device_id, window)
+    <span class="kw">return</span> [<span class="fn">enrich_with_anomaly_score</span>(m) <span class="kw">for</span> m <span class="kw">in</span> metrics]</pre>
+    </div>
+
+    <div class="arch-diagram">
+      <div class="arch-title">// Reference Architecture — Full-Stack Network Dashboard</div>
+      <div class="arch-layers">
+        <div class="arch-layer">
+          <div class="arch-label">Browser</div>
+          <div class="arch-boxes">
+            <div class="arch-box" style="color:#00d4ff;border-color:rgba(0,212,255,0.3);background:rgba(0,212,255,0.06);">React SPA</div>
+            <div class="arch-box" style="color:#00d4ff;border-color:rgba(0,212,255,0.3);background:rgba(0,212,255,0.06);">WebSocket Client</div>
+            <div class="arch-box" style="color:#00d4ff;border-color:rgba(0,212,255,0.3);background:rgba(0,212,255,0.06);">D3 Topology Map</div>
+          </div>
+        </div>
+        <div class="arch-layer">
+          <div class="arch-label">Gateway</div>
+          <div class="arch-boxes">
+            <div class="arch-box" style="color:#a855f7;border-color:rgba(168,85,247,0.3);background:rgba(168,85,247,0.06);">Kong / NGINX</div>
+            <div class="arch-box" style="color:#a855f7;border-color:rgba(168,85,247,0.3);background:rgba(168,85,247,0.06);">Auth (OIDC)</div>
+            <div class="arch-box" style="color:#a855f7;border-color:rgba(168,85,247,0.3);background:rgba(168,85,247,0.06);">Rate Limiter</div>
+          </div>
+        </div>
+        <div class="arch-layer">
+          <div class="arch-label">Services</div>
+          <div class="arch-boxes">
+            <div class="arch-box" style="color:#00ff88;border-color:rgba(0,255,136,0.3);background:rgba(0,255,136,0.06);">FastAPI</div>
+            <div class="arch-box" style="color:#00ff88;border-color:rgba(0,255,136,0.3);background:rgba(0,255,136,0.06);">Node.js WS</div>
+            <div class="arch-box" style="color:#00ff88;border-color:rgba(0,255,136,0.3);background:rgba(0,255,136,0.06);">ML Service</div>
+            <div class="arch-box" style="color:#00ff88;border-color:rgba(0,255,136,0.3);background:rgba(0,255,136,0.06);">Event Bus (Kafka)</div>
+          </div>
+        </div>
+        <div class="arch-layer">
+          <div class="arch-label">Data</div>
+          <div class="arch-boxes">
+            <div class="arch-box" style="color:#fbbf24;border-color:rgba(251,191,36,0.3);background:rgba(251,191,36,0.06);">TimescaleDB</div>
+            <div class="arch-box" style="color:#fbbf24;border-color:rgba(251,191,36,0.3);background:rgba(251,191,36,0.06);">PostgreSQL</div>
+            <div class="arch-box" style="color:#fbbf24;border-color:rgba(251,191,36,0.3);background:rgba(251,191,36,0.06);">Redis</div>
+            <div class="arch-box" style="color:#fbbf24;border-color:rgba(251,191,36,0.3);background:rgba(251,191,36,0.06);">Elasticsearch</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== PILLAR 2: AI/ML ===== -->
+  <div class="pillar" id="pillar-1">
+    <div class="pillar-header">
+      <div class="pillar-icon" style="background: rgba(168,85,247,0.1); color: #a855f7;">🧠</div>
+      <div>
+        <div class="pillar-title">AI/ML for Network Performance & Anomaly Detection</div>
+        <div class="pillar-desc">Operationalize machine learning models that predict failures, detect anomalies, and continuously improve from network telemetry data.</div>
+      </div>
+    </div>
+    <style>.pillar:nth-child(2) .pillar-header::before { background: linear-gradient(90deg,#a855f7,transparent);}</style>
+
+    <div class="sections-grid">
+      <div class="section-card">
+        <div class="section-title" style="color:#a855f7;">Use Cases & Models</div>
+        <ul class="item-list">
+          <li><strong>Anomaly Detection</strong> — Isolation Forest, LSTM Autoencoder, or One-Class SVM on interface metrics</li>
+          <li><strong>Failure Prediction</strong> — XGBoost/LightGBM classifiers trained on incident history; predict 2–4 hrs ahead</li>
+          <li><strong>Traffic Forecasting</strong> — Facebook Prophet or Temporal Fusion Transformer for capacity planning</li>
+          <li><strong>Root Cause Analysis</strong> — Graph Neural Networks over topology; causal inference with DoWhy</li>
+          <li><strong>Performance Optimization</strong> — RL agents for adaptive QoS and dynamic routing decisions</li>
+        </ul>
+      </div>
+
+      <div class="section-card">
+        <div class="section-title" style="color:#a855f7;">Data Pipeline</div>
+        <ul class="item-list">
+          <li><strong>Ingestion</strong> — SNMP, NetFlow/IPFIX, gRPC streaming telemetry (OpenConfig), syslog</li>
+          <li><strong>Processing</strong> — Apache Spark Streaming or Flink for real-time feature computation</li>
+          <li><strong>Feature Store</strong> — Feast or Tecton to ensure train/serve consistency; versioned feature sets</li>
+          <li><strong>Labeling</strong> — Auto-label with historical incidents; human-in-loop for ambiguous cases</li>
+          <li><strong>Storage</strong> — Delta Lake or Iceberg on S3/ADLS for reproducible training datasets</li>
+        </ul>
+      </div>
+
+      <div class="section-card">
+        <div class="section-title" style="color:#a855f7;">MLOps & Serving</div>
+        <ul class="item-list">
+          <li><strong>Experiment tracking</strong> — MLflow for parameters, metrics, and artifact versioning</li>
+          <li><strong>Model registry</strong> — MLflow Model Registry with staging → production promotion gates</li>
+          <li><strong>Serving</strong> — Triton Inference Server or BentoML; containerized behind REST/gRPC</li>
+          <li><strong>Retraining</strong> — Triggered by data drift (KL divergence > threshold) or scheduled weekly</li>
+          <li><strong>Monitoring</strong> — Evidently AI for feature drift; track prediction latency with Prometheus</li>
+        </ul>
+      </div>
+
+      <div class="section-card">
+        <div class="section-title" style="color:#a855f7;">Model Evaluation</div>
+        <ul class="item-list">
+          <li><strong>Anomaly detection</strong> — Precision, recall, F1, false positive rate; business metric: MTTR reduction</li>
+          <li><strong>Failure prediction</strong> — AUC-ROC, precision@k, lead time to alert (target: 2–4h before incident)</li>
+          <li><strong>Split strategy</strong> — Always time-based splits; never random (avoids data leakage in time series)</li>
+          <li><strong>Backtesting</strong> — Walk-forward validation across 6 months of historical data before production</li>
+          <li><strong>Shadow mode</strong> — Run new model in parallel with production; compare outcomes before cutover</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="code-block">
+      <div class="code-header">
+        <div class="code-dots"><div class="code-dot d1"></div><div class="code-dot d2"></div><div class="code-dot d3"></div></div>
+        <div class="code-lang">Python · LSTM Autoencoder — Anomaly Detection</div>
+      </div>
+      <pre><span class="kw">import</span> <span class="var">numpy as np</span>
+<span class="kw">from</span> <span class="var">tensorflow.keras</span> <span class="kw">import</span> <span class="var">Model, layers</span>
+<span class="kw">import</span> <span class="var">mlflow</span>
+
+<span class="kw">def</span> <span class="fn">build_lstm_autoencoder</span>(timesteps: <span class="var">int</span>, features: <span class="var">int</span>) -> <span class="var">Model</span>:
+    inputs = <span class="fn">layers.Input</span>(shape=(timesteps, features))
+    <span class="cm"># Encoder: compress sequence to latent representation</span>
+    x = <span class="fn">layers.LSTM</span>(<span class="num">64</span>, activation=<span class="str">"tanh"</span>, return_sequences=<span class="num">True</span>)(inputs)
+    x = <span class="fn">layers.LSTM</span>(<span class="num">32</span>, activation=<span class="str">"tanh"</span>, return_sequences=<span class="num">False</span>)(x)
+    x = <span class="fn">layers.RepeatVector</span>(timesteps)(x)
+    <span class="cm"># Decoder: reconstruct the sequence</span>
+    x = <span class="fn">layers.LSTM</span>(<span class="num">32</span>, activation=<span class="str">"tanh"</span>, return_sequences=<span class="num">True</span>)(x)
+    x = <span class="fn">layers.LSTM</span>(<span class="num">64</span>, activation=<span class="str">"tanh"</span>, return_sequences=<span class="num">True</span>)(x)
+    outputs = <span class="fn">layers.TimeDistributed</span>(<span class="fn">layers.Dense</span>(features))(x)
+    <span class="kw">return</span> <span class="fn">Model</span>(inputs, outputs)
+
+<span class="kw">def</span> <span class="fn">detect_anomalies</span>(model, X, threshold_pct=<span class="num">95</span>):
+    <span class="cm">"""Anomaly if reconstruction error > 95th percentile of training errors."""</span>
+    recon_errors = np.<span class="fn">mean</span>(np.<span class="fn">square</span>(X - model.<span class="fn">predict</span>(X)), axis=(1,2))
+    threshold = np.<span class="fn">percentile</span>(recon_errors, threshold_pct)
+    <span class="kw">return</span> recon_errors > threshold, recon_errors</pre>
+    </div>
+
+    <div class="roadmap">
+      <div class="arch-title">// ML Operationalization Roadmap</div>
+      <div class="phases">
+        <div class="phase">
+          <div class="phase-num">Phase 1 · Month 1–2</div>
+          <div class="phase-name" style="color:#a855f7;">Data Foundation</div>
+          <ul class="phase-items">
+            <li>✓ Telemetry ingestion pipeline</li>
+            <li>✓ Feature engineering library</li>
+            <li>✓ Historical data labeling</li>
+            <li>✓ Baseline rule-based alerts</li>
+          </ul>
+        </div>
+        <div class="phase">
+          <div class="phase-num">Phase 2 · Month 3–4</div>
+          <div class="phase-name" style="color:#00d4ff;">First Models</div>
+          <ul class="phase-items">
+            <li>✓ Isolation Forest anomaly</li>
+            <li>✓ MLflow experiment tracking</li>
+            <li>✓ Shadow mode deployment</li>
+            <li>✓ NOC feedback loop</li>
+          </ul>
+        </div>
+        <div class="phase">
+          <div class="phase-num">Phase 3 · Month 5–6</div>
+          <div class="phase-name" style="color:#00ff88;">Production</div>
+          <ul class="phase-items">
+            <li>✓ Model serving APIs</li>
+            <li>✓ Drift monitoring</li>
+            <li>✓ Auto-retraining triggers</li>
+            <li>✓ ITSM integration</li>
+          </ul>
+        </div>
+        <div class="phase">
+          <div class="phase-num">Phase 4 · Month 7+</div>
+          <div class="phase-name" style="color:#fbbf24;">Advanced</div>
+          <ul class="phase-items">
+            <li>✓ RCA with Graph NNs</li>
+            <li>✓ RL-based optimization</li>
+            <li>✓ Closed-loop remediation</li>
+            <li>✓ Predictive capacity</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== PILLAR 3: Chatbots ===== -->
+  <div class="pillar" id="pillar-2">
+    <div class="pillar-header">
+      <div class="pillar-icon" style="background: rgba(255,107,53,0.1); color: #ff6b35;">💬</div>
+      <div>
+        <div class="pillar-title">Conversational AI & Network Support Chatbots</div>
+        <div class="pillar-desc">Build intelligent chatbots using OpenAI, Azure AI, and Dialogflow to automate Tier-1 network support, incident resolution, and knowledge retrieval.</div>
+      </div>
+    </div>
+
+    <div class="sections-grid">
+      <div class="section-card">
+        <div class="section-title" style="color:#ff6b35;">Platform Selection</div>
+        <ul class="item-list">
+          <li><strong>OpenAI GPT-4o</strong> — Best reasoning for complex network troubleshooting; use with function calling for live data lookups</li>
+          <li><strong>Azure OpenAI</strong> — Enterprise governance, data residency, private endpoints; ideal for regulated environments</li>
+          <li><strong>Dialogflow CX</strong> — Structured conversation flows; strong for scripted Tier-1 triage with clear decision trees</li>
+          <li><strong>LangChain / LlamaIndex</strong> — Orchestration layer for RAG pipelines over network KB, runbooks, and logs</li>
+          <li><strong>Hybrid approach</strong> — Dialogflow for flow control + OpenAI for freeform reasoning when structured flows fail</li>
+        </ul>
+      </div>
+
+      <div class="section-card">
+        <div class="section-title" style="color:#ff6b35;">RAG for Network Knowledge</div>
+        <ul class="item-list">
+          <li><strong>Knowledge sources</strong> — Network runbooks, Confluence pages, past incident tickets, vendor docs (Cisco, Juniper)</li>
+          <li><strong>Chunking strategy</strong> — Semantic chunking by section; preserve runbook step sequences intact</li>
+          <li><strong>Vector store</strong> — Pinecone, Weaviate, or pgvector; embed with text-embedding-3-large</li>
+          <li><strong>Retrieval</strong> — Hybrid search: dense vectors + BM25 keyword for precise config lookups</li>
+          <li><strong>Context injection</strong> — Inject live device state (interfaces, BGP neighbors) alongside retrieved KB chunks</li>
+        </ul>
+      </div>
+
+      <div class="section-card">
+        <div class="section-title" style="color:#ff6b35;">Agentic Capabilities</div>
+        <ul class="item-list">
+          <li><strong>Function calling</strong> — Tools for: show interface status, pull active alerts, query CMDB, create ServiceNow ticket</li>
+          <li><strong>Multi-step reasoning</strong> — Agent autonomously diagnoses: "Interface down → check BGP → check upstream → propose fix"</li>
+          <li><strong>Human handoff</strong> — Auto-escalate when confidence low, customer requests human, or action requires approval</li>
+          <li><strong>Action guardrails</strong> — Approval gates for any write operations (config changes, ticket creation)</li>
+          <li><strong>Memory</strong> — Session memory for conversation continuity; long-term memory for user preferences</li>
+        </ul>
+      </div>
+
+      <div class="section-card">
+        <div class="section-title" style="color:#ff6b35;">Deployment & Integration</div>
+        <ul class="item-list">
+          <li><strong>Channels</strong> — Slack, MS Teams, ServiceNow Virtual Agent, web chat widget, voice (Twilio)</li>
+          <li><strong>ITSM integration</strong> — Auto-create, update, and resolve ServiceNow tickets; pull CI data from CMDB</li>
+          <li><strong>Auth</strong> — SSO passthrough so bot acts on behalf of authenticated user; audit every action</li>
+          <li><strong>Evaluation</strong> — Track intent accuracy, resolution rate, escalation rate, CSAT; A/B test prompts</li>
+          <li><strong>Feedback loop</strong> — Thumbs up/down on responses; corrections feed into fine-tuning pipeline</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="code-block">
+      <div class="code-header">
+        <div class="code-dots"><div class="code-dot d1"></div><div class="code-dot d2"></div><div class="code-dot d3"></div></div>
+        <div class="code-lang">Python · LangChain — Network Support Agent with Tool Use</div>
+      </div>
+      <pre><span class="kw">from</span> <span class="var">langchain.agents</span> <span class="kw">import</span> <span class="var">AgentExecutor, create_openai_functions_agent</span>
+<span class="kw">from</span> <span class="var">langchain_openai</span> <span class="kw">import</span> <span class="var">ChatOpenAI</span>
+<span class="kw">from</span> <span class="var">langchain.tools</span> <span class="kw">import</span> <span class="var">tool</span>
+
+<span class="var">@tool</span>
+<span class="kw">def</span> <span class="fn">get_interface_status</span>(device_id: <span class="var">str</span>, interface: <span class="var">str</span>) -> <span class="var">dict</span>:
+    <span class="str">"""Get real-time status of a network interface on a device."""</span>
+    <span class="kw">return</span> <span class="var">network_api</span>.<span class="fn">get_interface</span>(device_id, interface)
+
+<span class="var">@tool</span>
+<span class="kw">def</span> <span class="fn">search_runbooks</span>(query: <span class="var">str</span>) -> <span class="var">str</span>:
+    <span class="str">"""Search network runbooks and KB articles for troubleshooting procedures."""</span>
+    docs = <span class="var">vector_store</span>.<span class="fn">similarity_search</span>(query, k=<span class="num">3</span>)
+    <span class="kw">return</span> <span class="str">"\n\n"</span>.<span class="fn">join</span>([d.page_content <span class="kw">for</span> d <span class="kw">in</span> docs])
+
+<span class="var">@tool</span>
+<span class="kw">def</span> <span class="fn">create_incident_ticket</span>(title: <span class="var">str</span>, description: <span class="var">str</span>, priority: <span class="var">str</span>) -> <span class="var">str</span>:
+    <span class="str">"""Create a ServiceNow incident ticket. Requires user confirmation first."""</span>
+    <span class="kw">return</span> <span class="var">servicenow</span>.<span class="fn">create_incident</span>(title, description, priority)
+
+<span class="var">llm</span> = <span class="fn">ChatOpenAI</span>(model=<span class="str">"gpt-4o"</span>, temperature=<span class="num">0</span>)
+<span class="var">tools</span> = [<span class="var">get_interface_status, search_runbooks, create_incident_ticket</span>]
+<span class="var">agent</span> = <span class="fn">create_openai_functions_agent</span>(<span class="var">llm, tools, network_support_prompt</span>)
+<span class="var">executor</span> = <span class="fn">AgentExecutor</span>(<span class="var">agent</span>=<span class="var">agent, tools</span>=<span class="var">tools, verbose</span>=<span class="num">True</span>, max_iterations=<span class="num">5</span>)</pre>
+    </div>
+  </div>
+
+  <!-- ===== PILLAR 4: Network Automation ===== -->
+  <div class="pillar" id="pillar-3">
+    <div class="pillar-header">
+      <div class="pillar-icon" style="background: rgba(0,255,136,0.1); color: #00ff88;">🔗</div>
+      <div>
+        <div class="pillar-title">Network Automation & Data Engineering</div>
+        <div class="pillar-desc">Integrate APIs, orchestrate multi-vendor workflows, and transform raw telemetry into decision-ready intelligence using Ansible, Terraform, and Cisco NSO.</div>
+      </div>
+    </div>
+
+    <div class="sections-grid">
+      <div class="section-card">
+        <div class="section-title" style="color:#00ff88;">Automation Tooling</div>
+        <ul class="item-list">
+          <li><strong>Ansible</strong> — Network module collections (cisco.ios, junipernetworks.junos); playbooks for config push, validation, compliance checks</li>
+          <li><strong>Terraform</strong> — IaC for cloud networking (VPCs, NACLs, load balancers); Terragrunt for multi-account structure</li>
+          <li><strong>Cisco NSO</strong> — Model-driven multi-vendor orchestration; YANG services for intent-based provisioning</li>
+          <li><strong>Python Nornir</strong> — Concurrent multi-device operations; combine with Netmiko/NAPALM for vendor abstraction</li>
+          <li><strong>AWX / AAP</strong> — Enterprise Ansible automation platform with RBAC, job scheduling, and audit trails</li>
+        </ul>
+      </div>
+
+      <div class="section-card">
+        <div class="section-title" style="color:#00ff88;">API Integration Patterns</div>
+        <ul class="item-list">
+          <li><strong>Network device APIs</strong> — RESTCONF/NETCONF over YANG models; prefer model-driven over CLI scraping</li>
+          <li><strong>ITSM APIs</strong> — ServiceNow REST API for CI/CD of network changes; change request auto-approval workflows</li>
+          <li><strong>IPAM/CMDB</strong> — NetBox as source of truth; trigger automations from IP allocation events</li>
+          <li><strong>SD-WAN APIs</strong> — Cisco vManage, VMware VeloCloud programmatic policy management</li>
+          <li><strong>Async patterns</strong> — Webhook callbacks for long-running device operations; avoid synchronous timeouts</li>
+        </ul>
+      </div>
+
+      <div class="section-card">
+        <div class="section-title" style="color:#00ff88;">Data Engineering</div>
+        <ul class="item-list">
+          <li><strong>Telemetry pipeline</strong> — gRPC dial-out → Telegraf → Kafka → Spark Streaming → TimescaleDB + S3</li>
+          <li><strong>Normalization</strong> — OpenConfig YANG models to vendor-neutral schema; handle Cisco, Juniper, Arista variances</li>
+          <li><strong>dbt</strong> — Transform raw telemetry into curated data marts: availability, utilization, error rate trends</li>
+          <li><strong>Data quality</strong> — Great Expectations for pipeline validation; alert on missing/stale device data</li>
+          <li><strong>Orchestration</strong> — Apache Airflow DAGs for ETL schedules, model retraining, report generation</li>
+        </ul>
+      </div>
+
+      <div class="section-card">
+        <div class="section-title" style="color:#00ff88;">Workflow Orchestration</div>
+        <ul class="item-list">
+          <li><strong>Event-driven</strong> — Alert → automated diagnosis → remediation playbook → human approval → execution</li>
+          <li><strong>Configuration compliance</strong> — Scheduled Ansible scans compare running vs. desired state; auto-remediate drift</li>
+          <li><strong>Change automation</strong> — End-to-end: ServiceNow CR approval → Terraform/Ansible execution → validation → closure</li>
+          <li><strong>Rollback</strong> — Config snapshots pre-change; automatic rollback on validation failure within 5 minutes</li>
+          <li><strong>State tracking</strong> — Centralized state machine (Redis/Postgres) for long-running multi-device workflows</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="code-block">
+      <div class="code-header">
+        <div class="code-dots"><div class="code-dot d1"></div><div class="code-dot d2"></div><div class="code-dot d3"></div></div>
+        <div class="code-lang">YAML · Ansible — Multi-vendor BGP Compliance Check</div>
+      </div>
+      <pre><span class="cm">---</span>
+<span class="cm"># Playbook: Validate BGP neighbor states and auto-remediate if session down</span>
+- <span class="kw">name</span>: <span class="str">BGP Health Check & Remediation</span>
+  <span class="kw">hosts</span>: <span class="var">core_routers</span>
+  <span class="kw">gather_facts</span>: <span class="num">false</span>
+  <span class="kw">vars</span>:
+    <span class="kw">alert_threshold_down</span>: <span class="num">2</span>  <span class="cm"># peers down before escalation</span>
+  <span class="kw">tasks</span>:
+    - <span class="kw">name</span>: <span class="str">Collect BGP summary</span>
+      <span class="var">cisco.ios.ios_command</span>:
+        <span class="kw">commands</span>: <span class="str">show bgp summary</span>
+      <span class="kw">register</span>: <span class="var">bgp_output</span>
+
+    - <span class="kw">name</span>: <span class="str">Parse neighbor states</span>
+      <span class="var">set_fact</span>:
+        <span class="kw">down_peers</span>: <span class="str">"{{ bgp_output | parse_bgp_peers | selectattr('state', 'ne', 'Established') }}"</span>
+
+    - <span class="kw">name</span>: <span class="str">Clear soft if peer flapping (auto-remediation)</span>
+      <span class="var">cisco.ios.ios_command</span>:
+        <span class="kw">commands</span>: <span class="str">"clear ip bgp {{ item.peer }} soft"</span>
+      <span class="kw">loop</span>: <span class="str">"{{ down_peers }}"</span>
+      <span class="kw">when</span>: <span class="var">down_peers | length</span> < <span class="var">alert_threshold_down</span>
+
+    - <span class="kw">name</span>: <span class="str">Create ServiceNow incident if critical</span>
+      <span class="var">uri</span>:
+        <span class="kw">url</span>: <span class="str">"{{ snow_api }}/incident"</span>
+        <span class="kw">method</span>: <span class="var">POST</span>
+        <span class="kw">body_format</span>: <span class="var">json</span>
+      <span class="kw">when</span>: <span class="var">down_peers | length</span> >= <span class="var">alert_threshold_down</span></pre>
+    </div>
+  </div>
+
+  <!-- ===== PILLAR 5: DevOps ===== -->
+  <div class="pillar" id="pillar-4">
+    <div class="pillar-header">
+      <div class="pillar-icon" style="background: rgba(251,191,36,0.1); color: #fbbf24;">🚀</div>
+      <div>
+        <div class="pillar-title">DevOps, CI/CD & Cross-Functional Collaboration</div>
+        <div class="pillar-desc">Implement production-grade pipelines, containerize workloads, and drive innovation across Network, Cloud, AI, and Security teams.</div>
+      </div>
+    </div>
+
+    <div class="sections-grid">
+      <div class="section-card">
+        <div class="section-title" style="color:#fbbf24;">CI/CD Pipeline Design</div>
+        <ul class="item-list">
+          <li><strong>Platform</strong> — GitHub Actions or GitLab CI; Jenkins for on-prem with existing infra</li>
+          <li><strong>Pipeline stages</strong> — Lint → Unit test → SAST scan → Build image → Integration test → Stage deploy → Smoke test → Prod deploy</li>
+          <li><strong>Network automation CI</strong> — Ansible Molecule for playbook testing; Batfish for pre-deployment network config validation</li>
+          <li><strong>Terraform CI</strong> — fmt → validate → plan → cost estimate (Infracost) → apply (manual gate for prod)</li>
+          <li><strong>Deployment strategies</strong> — Blue/green for stateless services; canary releases for ML models; feature flags for gradual rollout</li>
+        </ul>
+      </div>
+
+      <div class="section-card">
+        <div class="section-title" style="color:#fbbf24;">Containerization</div>
+        <ul class="item-list">
+          <li><strong>Docker best practices</strong> — Multi-stage builds, non-root users, distroless base images, image signing</li>
+          <li><strong>Kubernetes</strong> — Deployments, HPA for auto-scaling, PodDisruptionBudgets for HA, NetworkPolicies for isolation</li>
+          <li><strong>Helm charts</strong> — Templatize all app configs; separate values files per environment</li>
+          <li><strong>Service mesh</strong> — Istio or Linkerd for mTLS between services, traffic splitting for canary, distributed tracing</li>
+          <li><strong>GitOps</strong> — ArgoCD or Flux for declarative, auditable cluster state management</li>
+        </ul>
+      </div>
+
+      <div class="section-card">
+        <div class="section-title" style="color:#fbbf24;">Observability Stack</div>
+        <ul class="item-list">
+          <li><strong>Metrics</strong> — Prometheus + Grafana; instrument every service with RED metrics (Rate, Errors, Duration)</li>
+          <li><strong>Logs</strong> — Structured JSON logging → Fluentd/Fluent Bit → Elasticsearch → Kibana</li>
+          <li><strong>Traces</strong> — OpenTelemetry SDK in all services → Jaeger or Tempo for distributed tracing</li>
+          <li><strong>Alerting</strong> — AlertManager with PagerDuty/OpsGenie; SLO-based alerts, not just threshold alerts</li>
+          <li><strong>Dashboards</strong> — Unified NOC + DevOps view: infra health alongside application KPIs</li>
+        </ul>
+      </div>
+
+      <div class="section-card">
+        <div class="section-title" style="color:#fbbf24;">Cross-Team Collaboration</div>
+        <ul class="item-list">
+          <li><strong>Platform team model</strong> — Build internal developer platform (IDP) with self-service infra; reduce toil for Network/AI teams</li>
+          <li><strong>API contracts</strong> — OpenAPI specs in Git; breaking changes require versioning and migration plan</li>
+          <li><strong>Architecture reviews</strong> — RFC process for significant changes; lightweight ADRs (Architecture Decision Records)</li>
+          <li><strong>Security left-shift</strong> — Security team embedded in sprint reviews; threat modeling at design phase</li>
+          <li><strong>SRE practices</strong> — Error budgets, blameless postmortems, game days; share on-call rotation with Network ops</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="code-block">
+      <div class="code-header">
+        <div class="code-dots"><div class="code-dot d1"></div><div class="code-dot d2"></div><div class="code-dot d3"></div></div>
+        <div class="code-lang">YAML · GitHub Actions — Full CI/CD Pipeline for Network ML App</div>
+      </div>
+      <pre><span class="kw">name</span>: <span class="str">Network AI App — CI/CD</span>
+<span class="kw">on</span>:
+  <span class="kw">push</span>: { <span class="kw">branches</span>: [<span class="str">main</span>, <span class="str">develop</span>] }
+  <span class="kw">pull_request</span>: { <span class="kw">branches</span>: [<span class="str">main</span>] }
+
+<span class="kw">jobs</span>:
+  <span class="kw">quality</span>:
+    <span class="kw">runs-on</span>: <span class="var">ubuntu-latest</span>
+    <span class="kw">steps</span>:
+      - <span class="kw">uses</span>: <span class="var">actions/checkout@v4</span>
+      - <span class="kw">name</span>: <span class="str">Lint & Type Check</span>
+        <span class="kw">run</span>: <span class="var">ruff check . && mypy src/</span>
+      - <span class="kw">name</span>: <span class="str">Unit Tests with Coverage</span>
+        <span class="kw">run</span>: <span class="var">pytest --cov=src --cov-fail-under=80</span>
+      - <span class="kw">name</span>: <span class="str">SAST Security Scan</span>
+        <span class="kw">uses</span>: <span class="var">github/codeql-action/analyze@v3</span>
+
+  <span class="kw">build-push</span>:
+    <span class="kw">needs</span>: <span class="var">quality</span>
+    <span class="kw">runs-on</span>: <span class="var">ubuntu-latest</span>
+    <span class="kw">steps</span>:
+      - <span class="kw">name</span>: <span class="str">Build & Push to Registry</span>
+        <span class="kw">run</span>: |
+          <span class="var">docker build -t $IMAGE:${{ github.sha }} .</span>
+          <span class="var">docker push $IMAGE:${{ github.sha }}</span>
+
+  <span class="kw">deploy-staging</span>:
+    <span class="kw">needs</span>: <span class="var">build-push</span>
+    <span class="kw">steps</span>:
+      - <span class="kw">name</span>: <span class="str">Deploy to Staging via Helm</span>
+        <span class="kw">run</span>: <span class="var">helm upgrade --install network-ai ./charts --set image.tag=${{ github.sha }} -n staging</span>
+      - <span class="kw">name</span>: <span class="str">Smoke Tests</span>
+        <span class="kw">run</span>: <span class="var">pytest tests/smoke/ --base-url=$STAGING_URL</span>
+
+  <span class="kw">deploy-prod</span>:
+    <span class="kw">needs</span>: <span class="var">deploy-staging</span>
+    <span class="kw">environment</span>: <span class="var">production</span>  <span class="cm"># requires manual approval</span>
+    <span class="kw">steps</span>:
+      - <span class="kw">name</span>: <span class="str">Canary Deploy (10% traffic)</span>
+        <span class="kw">run</span>: <span class="var">helm upgrade --set canary.weight=10 ...</span></pre>
+    </div>
+
+    <div class="arch-diagram">
+      <div class="arch-title">// End-to-End DevOps Platform — Cross-Team View</div>
+      <div class="arch-layers">
+        <div class="arch-layer">
+          <div class="arch-label">Develop</div>
+          <div class="arch-boxes">
+            <div class="arch-box" style="color:#fbbf24;border-color:rgba(251,191,36,0.3);background:rgba(251,191,36,0.06);">GitHub / GitLab</div>
+            <div class="arch-box" style="color:#fbbf24;border-color:rgba(251,191,36,0.3);background:rgba(251,191,36,0.06);">Branch Strategy</div>
+            <div class="arch-box" style="color:#fbbf24;border-color:rgba(251,191,36,0.3);background:rgba(251,191,36,0.06);">Code Review</div>
+            <div class="arch-box" style="color:#fbbf24;border-color:rgba(251,191,36,0.3);background:rgba(251,191,36,0.06);">ADRs</div>
+          </div>
+        </div>
+        <div class="arch-layer">
+          <div class="arch-label">CI</div>
+          <div class="arch-boxes">
+            <div class="arch-box" style="color:#00d4ff;border-color:rgba(0,212,255,0.3);background:rgba(0,212,255,0.06);">Test + Lint</div>
+            <div class="arch-box" style="color:#00d4ff;border-color:rgba(0,212,255,0.3);background:rgba(0,212,255,0.06);">SAST / Snyk</div>
+            <div class="arch-box" style="color:#00d4ff;border-color:rgba(0,212,255,0.3);background:rgba(0,212,255,0.06);">Build Image</div>
+            <div class="arch-box" style="color:#00d4ff;border-color:rgba(0,212,255,0.3);background:rgba(0,212,255,0.06);">Batfish Validate</div>
+          </div>
+        </div>
+        <div class="arch-layer">
+          <div class="arch-label">CD</div>
+          <div class="arch-boxes">
+            <div class="arch-box" style="color:#00ff88;border-color:rgba(0,255,136,0.3);background:rgba(0,255,136,0.06);">ArgoCD</div>
+            <div class="arch-box" style="color:#00ff88;border-color:rgba(0,255,136,0.3);background:rgba(0,255,136,0.06);">Helm Charts</div>
+            <div class="arch-box" style="color:#00ff88;border-color:rgba(0,255,136,0.3);background:rgba(0,255,136,0.06);">Canary Rollout</div>
+            <div class="arch-box" style="color:#00ff88;border-color:rgba(0,255,136,0.3);background:rgba(0,255,136,0.06);">Feature Flags</div>
+          </div>
+        </div>
+        <div class="arch-layer">
+          <div class="arch-label">Observe</div>
+          <div class="arch-boxes">
+            <div class="arch-box" style="color:#a855f7;border-color:rgba(168,85,247,0.3);background:rgba(168,85,247,0.06);">Prometheus</div>
+            <div class="arch-box" style="color:#a855f7;border-color:rgba(168,85,247,0.3);background:rgba(168,85,247,0.06);">Grafana</div>
+            <div class="arch-box" style="color:#a855f7;border-color:rgba(168,85,247,0.3);background:rgba(168,85,247,0.06);">OpenTelemetry</div>
+            <div class="arch-box" style="color:#a855f7;border-color:rgba(168,85,247,0.3);background:rgba(168,85,247,0.06);">PagerDuty</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  function showPillar(idx) {
+    document.querySelectorAll('.pillar').forEach((p, i) => {
+      p.classList.toggle('active', i === idx);
+    });
+    document.querySelectorAll('.pillar-btn').forEach((b, i) => {
+      b.classList.toggle('active', i === idx);
+    });
+    window.scrollTo({ top: 300, behavior: 'smooth' });
+  }
+
+  // Add top border colors to pillar headers
+  const colors = ['#00d4ff','#a855f7','#ff6b35','#00ff88','#fbbf24'];
+  document.querySelectorAll('.pillar-header').forEach((h, i) => {
+    h.style.borderTop = `3px solid ${colors[i]}`;
+    h.style.boxShadow = `0 0 40px ${colors[i]}10`;
+  });
+</script>
+</body>
+</html>
