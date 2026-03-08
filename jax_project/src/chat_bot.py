@@ -8,8 +8,11 @@ from dotenv import load_dotenv
 
 
 def load_config() -> dict:
+    
     """Load and return configuration values from .env file."""
+    
     load_dotenv()
+    
     return {
         "model_name": os.getenv("MODEL_NAME"),
         "max_tokens": int(os.getenv("MAX_TOKENS")),
@@ -17,12 +20,16 @@ def load_config() -> dict:
     }
 
 def create_client() -> anthropic.Anthropic:
+    
     """Create and return an authenticated Anthropic client."""
+    
     return anthropic.Anthropic()
 
 
 def get_user_input() -> str | None:
-    """Prompt user for input. Returns None if user wants to quit."""
+    
+    """Prompt for user input. Returns None if user wants to quit/exit."""
+    
     user_input = input("You: ").strip()
     if user_input.lower() == "quit" or user_input.lower() == "exit":
         return None
@@ -30,14 +37,16 @@ def get_user_input() -> str | None:
 
 
 def receive_response(client: anthropic.Anthropic, config: dict, history: list) -> str:
+    
     """Send conversation history to the API and return the reply text."""
+    
     with client.messages.stream(
         model=config["model_name"],
         max_tokens=config["max_tokens"],
         system=config["system_prompt"],
         messages=history,
     ) as stream:
-        print("Claude: ", end="", flush=True)
+        print("Jax: ", end="", flush=True)
         for text in stream.text_stream:
             print(text, end="", flush=True)
         print("\n")
@@ -45,7 +54,9 @@ def receive_response(client: anthropic.Anthropic, config: dict, history: list) -
 
 
 def run_chat_bot():
-    """Run the interactive terminal chat loop."""
+    
+    """Run the interactive terminal chat bot loop."""
+    
     config = load_config()
     client = create_client()
     history = []
