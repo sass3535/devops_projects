@@ -24,20 +24,24 @@ def create_client() -> anthropic.Anthropic:
 def get_user_input() -> str | None:
     """Prompt user for input. Returns None if user wants to quit."""
     user_input = input("You: ").strip()
-    if user_input.lower() == "quit":
+    if user_input.lower() == "quit" or user_input.lower() == "exit":
         return None
     return user_input or ""
 
 
 def receive_response(client: anthropic.Anthropic, config: dict, history: list) -> str:
     """Send conversation history to the API and return the reply text."""
-    response = client.messages.create(
+    with client.messages.stream(
         model=config["model_name"],
         max_tokens=config["max_tokens"],
         system=config["system_prompt"],
         messages=history,
-    )
-    return response.content[0].text
+    ) as stream:
+        print("Claude: ", end="", flush=True)
+        for text in stream.text_stream:
+            print(text, end="", flush=True)
+        print("\n")
+        return stream.get_final_message().content[0].text
 
 
 def run_chat_bot():
