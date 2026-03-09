@@ -25,6 +25,11 @@ def create_client():
     
     return anthropic.Anthropic()
 
+def get_user_name():
+    print("Hello! Please enter First and Last Name to begin session.\n")
+    first_name = input("First Name: ")
+    last_name = input("Last Name: ")
+    return first_name, last_name
 
 def get_user_input():
     
@@ -60,8 +65,9 @@ def run_chat_bot():
     config = load_config()
     client = create_client()
     history = []
-
-    print("Chatbot ready. Type 'quit' to exit.\n")
+    get_user_name()
+    
+    print("\nChatbot ready. Type 'quit' or 'exit' to end session.\n")
 
     while True:
         user_input = get_user_input()
