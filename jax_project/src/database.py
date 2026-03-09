@@ -81,7 +81,7 @@ def insert_responses(message_id, content, token_count, latency_ms):
         
         return cursor.lastrowid
 
-
+#Test block for functions above
 if __name__ == "__main__":
     init_db()                                
     user_id = insert_users("Matt", "Sassoon")
