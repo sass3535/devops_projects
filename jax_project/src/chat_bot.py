@@ -73,7 +73,6 @@ def run_chat_bot():
         history.append({"role": "user", "content": user_input})
         reply = receive_response(client, config, history)
         history.append({"role": "assistant", "content": reply})
-        print(f"Claude: {reply}\n")
 
 
 if __name__ == "__main__":
