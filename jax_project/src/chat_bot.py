@@ -5,14 +5,17 @@ All configuration logic is loaded via a .env file, allowing for user customizati
 import os
 import anthropic
 from dotenv import load_dotenv
-
+from database import init_db
+from database import insert_users
+from database import insert_sessions
+from database import insert_messages
+from database import insert_responses
 
 def load_config():
     
     """Load and return configuration values from .env file."""
     
     load_dotenv()
-    
     return {
         "model_name": os.getenv("MODEL_NAME"),
         "max_tokens": int(os.getenv("MAX_TOKENS")),
@@ -22,10 +25,13 @@ def load_config():
 def create_client():
     
     """Create and return an authenticated Anthropic client."""
-    
+
     return anthropic.Anthropic()
 
 def get_user_name():
+    
+    """Captures user first and last name for DB storage."""
+    
     print("Hello! Please enter First and Last Name to begin session.\n")
     first_name = input("First Name: ")
     last_name = input("Last Name: ")
@@ -65,7 +71,13 @@ def run_chat_bot():
     config = load_config()
     client = create_client()
     history = []
-    get_user_name()
+    
+    #Database integration calls
+    init_db()
+    first_name, last_name = get_user_name()
+    # user_id = insert_users(first_name, last_name)
+    # session_id = insert_sessions(user_id, config["model_name"])
+    
     
     print("\nChatbot ready. Type 'quit' or 'exit' to end session.\n")
 
