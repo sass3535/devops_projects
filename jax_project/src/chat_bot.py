@@ -7,7 +7,7 @@ import anthropic
 from dotenv import load_dotenv
 
 
-def load_config() -> dict:
+def load_config():
     
     """Load and return configuration values from .env file."""
     
@@ -19,14 +19,14 @@ def load_config() -> dict:
         "system_prompt": os.getenv("SYSTEM"),
     }
 
-def create_client() -> anthropic.Anthropic:
+def create_client():
     
     """Create and return an authenticated Anthropic client."""
     
     return anthropic.Anthropic()
 
 
-def get_user_input() -> str | None:
+def get_user_input():
     
     """Prompt for user input. Returns None if user wants to quit/exit."""
     
@@ -36,7 +36,7 @@ def get_user_input() -> str | None:
     return user_input or ""
 
 
-def receive_response(client: anthropic.Anthropic, config: dict, history: list) -> str:
+def receive_response(client: anthropic.Anthropic, config: dict, history: list):
     
     """Send conversation history to the API and return the reply text."""
     
@@ -73,7 +73,6 @@ def run_chat_bot():
         history.append({"role": "user", "content": user_input})
         reply = receive_response(client, config, history)
         history.append({"role": "assistant", "content": reply})
-        print(f"Claude: {reply}\n")
 
 
 if __name__ == "__main__":
